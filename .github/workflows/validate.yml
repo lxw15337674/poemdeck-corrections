@@ -1,0 +1,30 @@
+name: Validate corrections
+
+# Runs on every pull request, including the ones the PoemDeck submission form
+# opens automatically. Format problems are caught here so review is only ever
+# about whether the content is right.
+
+on:
+  pull_request:
+    paths:
+      - 'poems/**'
+      - 'scripts/validate.mjs'
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      # No install step: the validator deliberately has no dependencies.
+      - run: node scripts/validate.mjs
