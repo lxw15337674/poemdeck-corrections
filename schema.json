@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PoemDeck correction file",
+  "description": "Shape of a poems/<slug>.md file after its frontmatter and sections are parsed. Enforced in CI; the reader lives in SparkHub at scripts/poemdeck/lib/overlay.ts.",
+  "type": "object",
+  "required": ["slug"],
+  "additionalProperties": false,
+  "properties": {
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$",
+      "description": "Identity key. Must equal the filename and must already exist in PoemDeck — corrections cannot create poems."
+    },
+    "正文": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 1,
+      "description": "Body lines. Stored simplified; the traditional view is generated at read time. Line count must match the stored poem — a structural problem belongs in an issue, not here."
+    },
+    "拼音": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "One entry per body line. Left out, CI generates it; written explicitly, CI leaves it alone."
+    },
+    "注释": {
+      "type": "object",
+      "additionalProperties": { "type": "string", "minLength": 1 },
+      "description": "Term to gloss. Written as `- 词: 解释` list items."
+    },
+    "译文": { "type": "string", "description": "Plain-language translation." },
+    "赏析": { "type": "string", "description": "Commentary." }
+  },
+  "$comment": "An empty section counts as absent, not as an instruction to clear the column: the submission template ships blank 注释/译文/赏析 headings, and treating those as a clear would erase the only PoemDeck content that cannot be regenerated from upstream."
+}
